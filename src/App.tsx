@@ -1,0 +1,128 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
+import DeviceInfoTab from './tabs/DeviceInfoTab';
+import NetworkInfoTab from './tabs/NetworkInfoTab';
+import CalculationTab from './tabs/CalculationTab';
+import BatteryStatusTab from './tabs/BatteryStatusTab';
+import ClipboardTab from './tabs/ClipboardTab';
+
+type TabName = 'device' | 'battery' | 'clipboard' | 'network' | 'calculation';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState<TabName>('device');
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'device':
+        return <DeviceInfoTab />;
+      case 'battery':
+        return <BatteryStatusTab />;
+      case 'clipboard':
+        return <ClipboardTab />;
+      case 'network':
+        return <NetworkInfoTab />;
+      case 'calculation':
+        return <CalculationTab />;
+      default:
+        return null;
+    }
+  };
+
+  const tabs = [
+    { id: 'device' as TabName, label: 'Device Info' },
+    { id: 'battery' as TabName, label: 'Battery' },
+    { id: 'clipboard' as TabName, label: 'Clipboard' },
+    { id: 'network' as TabName, label: 'Network' },
+    { id: 'calculation' as TabName, label: 'Calculation' },
+  ];
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>TurboModules Demo</Text>
+        <Text style={styles.headerSubtitle}>Performance Comparison</Text>
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.tabBar}
+      >
+        {tabs.map(tab => (
+          <TouchableOpacity
+            key={tab.id}
+            style={[styles.tab, activeTab === tab.id && styles.activeTab]}
+            onPress={() => setActiveTab(tab.id)}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === tab.id && styles.activeTabText,
+              ]}
+            >
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <ScrollView style={styles.content}>{renderTabContent()}</ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    backgroundColor: '#007AFF',
+    padding: 20,
+    // paddingTop: 10,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#fff',
+    opacity: 0.9,
+    // marginTop: 4,
+  },
+  tabBar: {
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  tab: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 3,
+    borderBottomColor: 'transparent',
+  },
+  activeTab: {
+    borderBottomColor: '#007AFF',
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: '#007AFF',
+    fontWeight: '600',
+  },
+  content: { flexGrow: 1 },
+});
+
+export default App;

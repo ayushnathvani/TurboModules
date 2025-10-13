@@ -1,5 +1,5 @@
 {
-  "name": "TurboModules",
+  "name": "turbomodules",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -36,5 +36,13 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "codegenConfig": {
+    "name": "TurboModulesSpec",
+    "type": "modules",
+    "jsSrcsDir": "src/specs",
+    "android": {
+      "javaPackageName": "com.turbomodules"
+    }
   }
 }

@@ -1,0 +1,42 @@
+package com.turbomodules.legacy
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+
+class ClipboardModuleLegacy(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+
+    override fun getName() = "ClipboardModuleLegacy"
+
+    @ReactMethod
+    fun setString(text: String, promise: Promise) {
+        try {
+            val clipboard = reactApplicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("text", text)
+            clipboard.setPrimaryClip(clip)
+            promise.resolve(null)
+        } catch (e: Exception) {
+            promise.reject("ERROR", "Failed to set clipboard text", e)
+        }
+    }
+
+    @ReactMethod
+    fun getString(promise: Promise) {
+        try {
+            val clipboard = reactApplicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = clipboard.primaryClip
+            val text = if (clip != null && clip.itemCount > 0) {
+                clip.getItemAt(0).text?.toString() ?: ""
+            } else {
+                ""
+            }
+            promise.resolve(text)
+        } catch (e: Exception) {
+            promise.reject("ERROR", "Failed to get clipboard text", e)
+        }
+    }
+}
