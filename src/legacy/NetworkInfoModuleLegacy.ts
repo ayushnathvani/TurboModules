@@ -6,6 +6,7 @@ export interface NetworkInfo {
   type: string;
   isConnected: boolean;
   isInternetReachable: boolean;
+  error?: string; // Optional: Error message if network info couldn't be retrieved
 }
 
 export default {

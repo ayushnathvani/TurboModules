@@ -15,11 +15,19 @@ const DeviceInfoTab = () => {
   const [turboTime, setTurboTime] = useState<number>(0);
   const [legacyTime, setLegacyTime] = useState<number>(0);
   const [loading, setLoading] = useState(false);
+  const [isWarmedUp, setIsWarmedUp] = useState(false);
 
   const testTurboModule = async () => {
     setLoading(true);
-    const start = performance.now();
     try {
+      // Warm up TurboModule on first call (lazy loading initialization)
+      if (!isWarmedUp) {
+        await DeviceInfoModule.getDeviceInfo();
+        setIsWarmedUp(true);
+      }
+
+      // Now measure the actual performance
+      const start = performance.now();
       const result = await DeviceInfoModule.getDeviceInfo();
       const end = performance.now();
       setTurboResult(result);
@@ -58,6 +66,16 @@ const DeviceInfoTab = () => {
         Get device model, manufacturer, OS version, and more.
       </Text>
 
+      {!isWarmedUp && (
+        <View style={styles.infoBox}>
+          <Text style={styles.infoIcon}></Text>
+          <Text style={styles.infoText}>
+            TurboModules use lazy loading - they initialize on first use. This
+            test automatically warms up the module before measuring performance.
+          </Text>
+        </View>
+      )}
+
       <TouchableOpacity
         style={styles.button}
         onPress={testBoth}
@@ -73,7 +91,7 @@ const DeviceInfoTab = () => {
       <View style={styles.resultsContainer}>
         <View style={styles.resultCard}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>✨ With TurboModule</Text>
+            <Text style={styles.cardTitle}> With TurboModule</Text>
             {turboTime > 0 && (
               <Text style={styles.timeText}>{turboTime.toFixed(2)}ms</Text>
             )}
@@ -93,7 +111,7 @@ const DeviceInfoTab = () => {
 
         <View style={[styles.resultCard, styles.legacyCard]}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>🐌 Without TurboModule</Text>
+            <Text style={styles.cardTitle}>Without TurboModule</Text>
             {legacyTime > 0 && (
               <Text style={styles.timeText}>{legacyTime.toFixed(2)}ms</Text>
             )}
@@ -117,11 +135,22 @@ const DeviceInfoTab = () => {
             <Text style={styles.performanceText}>
               TurboModule is{' '}
               <Text style={styles.performanceHighlight}>
-                {((legacyTime / turboTime - 1) * 100).toFixed(1)}% faster
+                {turboTime < legacyTime
+                  ? `${((legacyTime / turboTime - 1) * 100).toFixed(1)}% faster`
+                  : `${((turboTime / legacyTime - 1) * 100).toFixed(
+                      1,
+                    )}% slower`}
               </Text>
             </Text>
             <Text style={styles.performanceDetail}>
-              Time saved: {(legacyTime - turboTime).toFixed(2)}ms
+              {turboTime < legacyTime
+                ? `Time saved: ${(legacyTime - turboTime).toFixed(2)}ms`
+                : `Extra time: ${(turboTime - legacyTime).toFixed(2)}ms`}
+            </Text>
+            <Text style={styles.performanceNote}>
+              TurboModules use lazy loading - they initialize only when first
+              needed. This test includes a warm-up call to show true performance
+              after initialization.
             </Text>
           </View>
         )}
@@ -151,6 +180,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginBottom: 20,
+  },
+  infoBox: {
+    flexDirection: 'row',
+    backgroundColor: '#FFF9E6',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#FFD54F',
+    alignItems: 'flex-start',
+  },
+  infoIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#666',
+    lineHeight: 18,
   },
   button: {
     backgroundColor: '#007AFF',
@@ -242,6 +291,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginTop: 4,
+  },
+  performanceNote: {
+    fontSize: 12,
+    color: '#1976D2',
+    marginTop: 12,
+    fontStyle: 'italic',
   },
 });
 

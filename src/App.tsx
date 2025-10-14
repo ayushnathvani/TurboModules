@@ -54,6 +54,7 @@ const App = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.tabBar}
+        contentContainerStyle={styles.tabBarContent}
       >
         {tabs.map(tab => (
           <TouchableOpacity
@@ -73,7 +74,12 @@ const App = () => {
         ))}
       </ScrollView>
 
-      <ScrollView style={styles.content}>{renderTabContent()}</ScrollView>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.contentContainer}
+      >
+        {renderTabContent()}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -103,6 +109,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    flexGrow: 0,
+    flexShrink: 0,
+  },
+  tabBarContent: {
+    alignItems: 'center',
   },
   tab: {
     paddingHorizontal: 20,
@@ -122,7 +133,12 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontWeight: '600',
   },
-  content: { flexGrow: 1 },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    flexGrow: 1,
+  },
 });
 
 export default App;

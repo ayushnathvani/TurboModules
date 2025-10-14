@@ -80,7 +80,7 @@ const BatteryStatusTab = () => {
       <View style={styles.resultsContainer}>
         <View style={styles.resultCard}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>✨ With TurboModule</Text>
+            <Text style={styles.cardTitle}> With TurboModule</Text>
             {turboTime > 0 && (
               <Text style={styles.timeText}>{turboTime.toFixed(2)}ms</Text>
             )}
@@ -106,7 +106,7 @@ const BatteryStatusTab = () => {
 
         <View style={[styles.resultCard, styles.legacyCard]}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>🐌 Without TurboModule</Text>
+            <Text style={styles.cardTitle}> Without TurboModule</Text>
             {legacyTime > 0 && (
               <Text style={styles.timeText}>{legacyTime.toFixed(2)}ms</Text>
             )}

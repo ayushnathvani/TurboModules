@@ -92,40 +92,53 @@ const NetworkInfoTab = () => {
       <View style={styles.resultsContainer}>
         <View style={styles.resultCard}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>✨ With TurboModule</Text>
+            <Text style={styles.cardTitle}>With TurboModule</Text>
             {turboTime > 0 && (
               <Text style={styles.timeText}>{turboTime.toFixed(2)}ms</Text>
             )}
           </View>
           {turboResult ? (
             <View style={styles.networkInfo}>
-              <Text style={styles.networkIcon}>
-                {getNetworkIcon(turboResult.type)}
-              </Text>
-              <Text style={styles.networkType}>
-                {turboResult.type?.toUpperCase()}
-              </Text>
-              <View style={styles.statusContainer}>
-                <View
-                  style={[
-                    styles.statusDot,
-                    {
-                      backgroundColor: getConnectionColor(
-                        turboResult.isConnected,
-                      ),
-                    },
-                  ]}
-                />
-                <Text style={styles.statusText}>
-                  {turboResult.isConnected ? 'Connected' : 'Disconnected'}
-                </Text>
-              </View>
-              <View style={styles.detailsContainer}>
-                <InfoRow
-                  label="Internet Reachable"
-                  value={turboResult.isInternetReachable ? 'Yes' : 'No'}
-                />
-              </View>
+              {turboResult.error ? (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorIcon}>⚠️</Text>
+                  <Text style={styles.errorText}>{turboResult.error}</Text>
+                  <Text style={styles.errorHint}>
+                    Note: This may happen on devices without SIM card or missing
+                    permissions
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  <Text style={styles.networkIcon}>
+                    {getNetworkIcon(turboResult.type)}
+                  </Text>
+                  <Text style={styles.networkType}>
+                    {turboResult.type?.toUpperCase()}
+                  </Text>
+                  <View style={styles.statusContainer}>
+                    <View
+                      style={[
+                        styles.statusDot,
+                        {
+                          backgroundColor: getConnectionColor(
+                            turboResult.isConnected,
+                          ),
+                        },
+                      ]}
+                    />
+                    <Text style={styles.statusText}>
+                      {turboResult.isConnected ? 'Connected' : 'Disconnected'}
+                    </Text>
+                  </View>
+                  <View style={styles.detailsContainer}>
+                    <InfoRow
+                      label="Internet Reachable"
+                      value={turboResult.isInternetReachable ? 'Yes' : 'No'}
+                    />
+                  </View>
+                </>
+              )}
             </View>
           ) : (
             <Text style={styles.placeholder}>No data yet</Text>
@@ -141,33 +154,46 @@ const NetworkInfoTab = () => {
           </View>
           {legacyResult ? (
             <View style={styles.networkInfo}>
-              <Text style={styles.networkIcon}>
-                {getNetworkIcon(legacyResult.type)}
-              </Text>
-              <Text style={styles.networkType}>
-                {legacyResult.type?.toUpperCase()}
-              </Text>
-              <View style={styles.statusContainer}>
-                <View
-                  style={[
-                    styles.statusDot,
-                    {
-                      backgroundColor: getConnectionColor(
-                        legacyResult.isConnected,
-                      ),
-                    },
-                  ]}
-                />
-                <Text style={styles.statusText}>
-                  {legacyResult.isConnected ? 'Connected' : 'Disconnected'}
-                </Text>
-              </View>
-              <View style={styles.detailsContainer}>
-                <InfoRow
-                  label="Internet Reachable"
-                  value={legacyResult.isInternetReachable ? 'Yes' : 'No'}
-                />
-              </View>
+              {legacyResult.error ? (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorIcon}>⚠️</Text>
+                  <Text style={styles.errorText}>{legacyResult.error}</Text>
+                  <Text style={styles.errorHint}>
+                    Note: This may happen on devices without SIM card or missing
+                    permissions
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  <Text style={styles.networkIcon}>
+                    {getNetworkIcon(legacyResult.type)}
+                  </Text>
+                  <Text style={styles.networkType}>
+                    {legacyResult.type?.toUpperCase()}
+                  </Text>
+                  <View style={styles.statusContainer}>
+                    <View
+                      style={[
+                        styles.statusDot,
+                        {
+                          backgroundColor: getConnectionColor(
+                            legacyResult.isConnected,
+                          ),
+                        },
+                      ]}
+                    />
+                    <Text style={styles.statusText}>
+                      {legacyResult.isConnected ? 'Connected' : 'Disconnected'}
+                    </Text>
+                  </View>
+                  <View style={styles.detailsContainer}>
+                    <InfoRow
+                      label="Internet Reachable"
+                      value={legacyResult.isInternetReachable ? 'Yes' : 'No'}
+                    />
+                  </View>
+                </>
+              )}
             </View>
           ) : (
             <Text style={styles.placeholder}>No data yet</Text>
@@ -331,6 +357,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginTop: 4,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    padding: 16,
+  },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#F44336',
+    textAlign: 'center',
+    marginBottom: 8,
+    fontWeight: '600',
+  },
+  errorHint: {
+    fontSize: 12,
+    color: '#999',
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
 

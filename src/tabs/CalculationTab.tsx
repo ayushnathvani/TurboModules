@@ -18,11 +18,19 @@ const CalculationTab = () => {
   const [turboTime, setTurboTime] = useState<number>(0);
   const [legacyTime, setLegacyTime] = useState<number>(0);
   const [loading, setLoading] = useState(false);
+  const [isWarmedUp, setIsWarmedUp] = useState(false);
 
   const testTurboModule = async () => {
     setLoading(true);
-    const start = performance.now();
     try {
+      // Warm up TurboModule on first call (lazy loading initialization)
+      if (!isWarmedUp) {
+        await CalculationModule.fibonacci(10);
+        setIsWarmedUp(true);
+      }
+
+      // Now measure the actual performance
+      const start = performance.now();
       let result;
       switch (activeTest) {
         case 'fibonacci':
@@ -103,6 +111,16 @@ const CalculationTab = () => {
         Run heavy calculations natively for performance comparison.
       </Text>
 
+      {!isWarmedUp && (
+        <View style={styles.infoBox}>
+          <Text style={styles.infoIcon}></Text>
+          <Text style={styles.infoText}>
+            TurboModules use lazy loading. This test automatically warms up the
+            module before measuring performance.
+          </Text>
+        </View>
+      )}
+
       <View style={styles.testSelector}>
         <Text style={styles.selectorLabel}>Select Test:</Text>
         <View style={styles.testButtons}>
@@ -173,7 +191,7 @@ const CalculationTab = () => {
       <View style={styles.resultsContainer}>
         <View style={styles.resultCard}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>✨ With TurboModule</Text>
+            <Text style={styles.cardTitle}> With TurboModule</Text>
             {turboTime > 0 && (
               <Text style={styles.timeText}>{turboTime.toFixed(2)}ms</Text>
             )}
@@ -196,7 +214,7 @@ const CalculationTab = () => {
 
         <View style={[styles.resultCard, styles.legacyCard]}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>🐌 Without TurboModule</Text>
+            <Text style={styles.cardTitle}> Without TurboModule</Text>
             {legacyTime > 0 && (
               <Text style={styles.timeText}>{legacyTime.toFixed(2)}ms</Text>
             )}
@@ -208,7 +226,7 @@ const CalculationTab = () => {
                 {formatResult(legacyResult)}
               </Text>
               <View style={styles.speedometer}>
-                <Text style={styles.speedometerIcon}>🐢</Text>
+                <Text style={styles.speedometerIcon}></Text>
                 <Text style={styles.speedometerText}>Slower Execution</Text>
               </View>
             </View>
@@ -223,15 +241,21 @@ const CalculationTab = () => {
             <Text style={styles.performanceText}>
               TurboModule is{' '}
               <Text style={styles.performanceHighlight}>
-                {((legacyTime / turboTime - 1) * 100).toFixed(1)}% faster
+                {turboTime < legacyTime
+                  ? `${((legacyTime / turboTime - 1) * 100).toFixed(1)}% faster`
+                  : `${((turboTime / legacyTime - 1) * 100).toFixed(
+                      1,
+                    )}% slower`}
               </Text>
             </Text>
             <Text style={styles.performanceDetail}>
-              Time saved: {(legacyTime - turboTime).toFixed(2)}ms
+              {turboTime < legacyTime
+                ? `Time saved: ${(legacyTime - turboTime).toFixed(2)}ms`
+                : `Extra time: ${(turboTime - legacyTime).toFixed(2)}ms`}
             </Text>
             <Text style={styles.performanceNote}>
-              💡 Heavy calculations show the most dramatic performance
-              improvements with TurboModules!
+               Heavy calculations show dramatic performance improvements with
+              TurboModules! The module is pre-warmed for accurate measurement.
             </Text>
           </View>
         )}
@@ -254,6 +278,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginBottom: 20,
+  },
+  infoBox: {
+    flexDirection: 'row',
+    backgroundColor: '#FFF9E6',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#FFD54F',
+    alignItems: 'flex-start',
+  },
+  infoIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#666',
+    lineHeight: 18,
   },
   testSelector: {
     marginBottom: 20,

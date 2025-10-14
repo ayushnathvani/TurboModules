@@ -114,18 +114,18 @@ const ClipboardTab = () => {
       <View style={styles.resultsContainer}>
         <View style={styles.resultCard}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>✨ With TurboModule</Text>
+            <Text style={styles.cardTitle}> With TurboModule</Text>
           </View>
           {turboSetTime > 0 ? (
             <View style={styles.clipboardInfo}>
               <View style={styles.operationRow}>
-                <Text style={styles.operationLabel}>📝 Set:</Text>
+                <Text style={styles.operationLabel}> Set:</Text>
                 <Text style={styles.timeValue}>
                   {turboSetTime.toFixed(2)}ms
                 </Text>
               </View>
               <View style={styles.operationRow}>
-                <Text style={styles.operationLabel}>📋 Get:</Text>
+                <Text style={styles.operationLabel}> Get:</Text>
                 <Text style={styles.timeValue}>
                   {turboGetTime.toFixed(2)}ms
                 </Text>
@@ -142,18 +142,18 @@ const ClipboardTab = () => {
 
         <View style={[styles.resultCard, styles.legacyCard]}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>🐌 Without TurboModule</Text>
+            <Text style={styles.cardTitle}>Without TurboModule</Text>
           </View>
           {legacySetTime > 0 ? (
             <View style={styles.clipboardInfo}>
               <View style={styles.operationRow}>
-                <Text style={styles.operationLabel}>📝 Set:</Text>
+                <Text style={styles.operationLabel}>Set:</Text>
                 <Text style={styles.timeValue}>
                   {legacySetTime.toFixed(2)}ms
                 </Text>
               </View>
               <View style={styles.operationRow}>
-                <Text style={styles.operationLabel}>📋 Get:</Text>
+                <Text style={styles.operationLabel}>Get:</Text>
                 <Text style={styles.timeValue}>
                   {legacyGetTime.toFixed(2)}ms
                 </Text>

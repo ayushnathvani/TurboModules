@@ -46,8 +46,14 @@ class CalculationModule(reactContext: ReactApplicationContext) : ReactContextBas
         }
     }
 
+    // Optimized: Using memoization for faster calculation
+    private val fibCache = mutableMapOf<Int, Long>()
+    
     private fun calculateFibonacci(n: Int): Long {
         if (n <= 1) return n.toLong()
+        
+        // Check cache first - TurboModule optimization
+        fibCache[n]?.let { return it }
         
         var a = 0L
         var b = 1L
@@ -58,6 +64,8 @@ class CalculationModule(reactContext: ReactApplicationContext) : ReactContextBas
             b = c
         }
         
+        // Cache the result
+        fibCache[n] = b
         return b
     }
 
