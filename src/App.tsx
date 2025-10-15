@@ -12,8 +12,16 @@ import NetworkInfoTab from './tabs/NetworkInfoTab';
 import CalculationTab from './tabs/CalculationTab';
 import BatteryStatusTab from './tabs/BatteryStatusTab';
 import ClipboardTab from './tabs/ClipboardTab';
+import FlatListTab from './tabs/FlatListTab';
+import LocationTab from './tabs/LocationTab';
 
-type TabName = 'device' | 'battery' | 'clipboard' | 'network' | 'calculation';
+type TabName =
+  | 'device'
+  | 'battery'
+  | 'clipboard'
+  | 'network'
+  | 'calculation'
+  | 'location';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState<TabName>('device');
@@ -30,6 +38,9 @@ const App = () => {
         return <NetworkInfoTab />;
       case 'calculation':
         return <CalculationTab />;
+      case 'location':
+        return <LocationTab />;
+
       default:
         return null;
     }
@@ -41,6 +52,7 @@ const App = () => {
     { id: 'clipboard' as TabName, label: 'Clipboard' },
     { id: 'network' as TabName, label: 'Network' },
     { id: 'calculation' as TabName, label: 'Calculation' },
+    { id: 'location' as TabName, label: 'Location' },
   ];
 
   return (

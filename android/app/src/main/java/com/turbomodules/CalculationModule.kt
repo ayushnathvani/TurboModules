@@ -95,8 +95,11 @@ class CalculationModule(reactContext: ReactApplicationContext) : ReactContextBas
     }
 
     private fun performMatrixMultiplication(size: Int): Double {
-        val matrixA = Array(size) { DoubleArray(size) { Random.nextDouble(0.0, 10.0) } }
-        val matrixB = Array(size) { DoubleArray(size) { Random.nextDouble(0.0, 10.0) } }
+        // Seed random number generator with fixed value for consistent results
+        val random = Random(42)
+        
+        val matrixA = Array(size) { DoubleArray(size) { random.nextDouble(0.0, 10.0) } }
+        val matrixB = Array(size) { DoubleArray(size) { random.nextDouble(0.0, 10.0) } }
         val result = Array(size) { DoubleArray(size) }
         
         for (i in 0 until size) {

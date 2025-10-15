@@ -28,7 +28,8 @@ class LegacyModulesPackage : ReactPackage {
             BatteryStatusModuleLegacy(reactContext),
             ClipboardModuleLegacy(reactContext),
             NetworkInfoModuleLegacy(reactContext),
-            CalculationModuleLegacy(reactContext)
+            CalculationModuleLegacy(reactContext),
+            LocationModuleLegacy(reactContext)
         )
     }
 

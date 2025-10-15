@@ -75,6 +75,9 @@ RCT_EXPORT_METHOD(matrixMultiplication:(double)size
 }
 
 - (double)performMatrixMultiplication:(int)size {
+  // Seed random number generator with fixed value for consistent results
+  srand(42);
+  
   double **matrixA = (double **)malloc(size * sizeof(double *));
   double **matrixB = (double **)malloc(size * sizeof(double *));
   double **result = (double **)malloc(size * sizeof(double *));

@@ -27,7 +27,9 @@ class TurboModulesPackage : ReactPackage {
             BatteryStatusModule(reactContext),
             ClipboardModule(reactContext),
             NetworkInfoModule(reactContext),
-            CalculationModule(reactContext)
+            CalculationModule(reactContext),
+            FlatListDataModule(reactContext),
+            LocationModule(reactContext)
         )
     }
 
