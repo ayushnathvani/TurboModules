@@ -29,7 +29,9 @@ class TurboModulesPackage : ReactPackage {
             NetworkInfoModule(reactContext),
             CalculationModule(reactContext),
             FlatListDataModule(reactContext),
-            LocationModule(reactContext)
+            LocationModule(reactContext),
+            CredentialsModule(reactContext),
+            CloudCredentialsModule(reactContext)
         )
     }
 

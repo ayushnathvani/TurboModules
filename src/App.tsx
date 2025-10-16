@@ -14,8 +14,10 @@ import BatteryStatusTab from './tabs/BatteryStatusTab';
 import ClipboardTab from './tabs/ClipboardTab';
 import FlatListTab from './tabs/FlatListTab';
 import LocationTab from './tabs/LocationTab';
+import LoginTab from './tabs/LoginTab';
 
 type TabName =
+  | 'login'
   | 'device'
   | 'battery'
   | 'clipboard'
@@ -24,9 +26,27 @@ type TabName =
   | 'location';
 
 const App = () => {
-  const [activeTab, setActiveTab] = useState<TabName>('device');
+  const [activeTab, setActiveTab] = useState<TabName>('login');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState<string>('');
+
+  const handleLoginSuccess = (username: string) => {
+    setLoggedInUser(username);
+    setIsLoggedIn(true);
+    setActiveTab('device'); // Switch to first tab after login
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setLoggedInUser('');
+    setActiveTab('login');
+  };
 
   const renderTabContent = () => {
+    if (!isLoggedIn) {
+      return <LoginTab onLoginSuccess={handleLoginSuccess} />;
+    }
+
     switch (activeTab) {
       case 'device':
         return <DeviceInfoTab />;
@@ -40,9 +60,8 @@ const App = () => {
         return <CalculationTab />;
       case 'location':
         return <LocationTab />;
-
       default:
-        return null;
+        return <DeviceInfoTab />;
     }
   };
 
@@ -55,11 +74,26 @@ const App = () => {
     { id: 'location' as TabName, label: 'Location' },
   ];
 
+  if (!isLoggedIn) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LoginTab onLoginSuccess={handleLoginSuccess} />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>TurboModules Demo</Text>
-        <Text style={styles.headerSubtitle}>Performance Comparison</Text>
+        <View style={styles.headerContent}>
+          <View>
+            <Text style={styles.headerTitle}>TurboModules Demo</Text>
+            <Text style={styles.headerSubtitle}>Welcome, {loggedInUser}!</Text>
+          </View>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -104,7 +138,11 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#007AFF',
     padding: 20,
-    // paddingTop: 10,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 24,
@@ -115,7 +153,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#fff',
     opacity: 0.9,
-    // marginTop: 4,
+  },
+  logoutButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   tabBar: {
     backgroundColor: '#fff',
