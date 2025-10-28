@@ -28,20 +28,53 @@ const LocationTab = () => {
   const requestLocationPermission = async (): Promise<boolean> => {
     if (Platform.OS === 'android') {
       try {
+        console.log('Requesting Android location permission...');
+        
+        // First check if we already have permission
+        const alreadyGranted = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        
+        console.log('Permission already granted:', alreadyGranted);
+        if (alreadyGranted) {
+          return true;
+        }
+
+        // Request permission with clear explanation
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
-            title: 'Location Permission',
+            title: 'Location Permission Required',
             message:
-              'This app needs access to your location for demonstration purposes.',
+              'This app needs location access to demonstrate TurboModule performance. ' +
+              'This is only for testing purposes and data stays on your device.',
             buttonNeutral: 'Ask Me Later',
             buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
+            buttonPositive: 'Allow',
           },
         );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
+        
+        console.log('Permission request result:', granted);
+        const isGranted = granted === PermissionsAndroid.RESULTS.GRANTED;
+        
+        if (!isGranted) {
+          // Also try requesting coarse location as fallback
+          const coarseGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+            {
+              title: 'Location Permission Required',
+              message: 'Please grant location access for this demo to work.',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'Allow',
+            },
+          );
+          return coarseGranted === PermissionsAndroid.RESULTS.GRANTED;
+        }
+        
+        return isGranted;
       } catch (err) {
-        console.warn(err);
+        console.error('Permission request error:', err);
         return false;
       }
     }

@@ -1,4 +1,5 @@
-import { NativeModules } from 'react-native';
+import type { TurboModule } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
 
 export interface NetworkInfo {
   type: string; // 'wifi', 'cellular', 'ethernet', 'none', 'unknown'
@@ -7,8 +8,8 @@ export interface NetworkInfo {
   error?: string; // Optional: Error message if network info couldn't be retrieved
 }
 
-interface NetworkInfoModuleType {
+interface Spec extends TurboModule {
   getNetworkInfo(): Promise<NetworkInfo>;
 }
 
-export default NativeModules.NetworkInfoModule as NetworkInfoModuleType;
+export default TurboModuleRegistry.getEnforcing<Spec>('NetworkInfoModule');

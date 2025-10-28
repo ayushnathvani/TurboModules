@@ -1,9 +1,10 @@
-import { NativeModules } from 'react-native';
+import type { TurboModule } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
 
-interface CalculationModuleType {
+interface Spec extends TurboModule {
   fibonacci(n: number): Promise<number>;
   primeFactors(n: number): Promise<number[]>;
   matrixMultiplication(size: number): Promise<number>;
 }
 
-export default NativeModules.CalculationModule as CalculationModuleType;
+export default TurboModuleRegistry.getEnforcing<Spec>('CalculationModule');

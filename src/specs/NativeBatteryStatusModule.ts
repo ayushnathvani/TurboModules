@@ -1,4 +1,5 @@
-import { NativeModules } from 'react-native';
+import type { TurboModule } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
 
 export interface BatteryStatus {
   level: number; // 0-100
@@ -6,8 +7,8 @@ export interface BatteryStatus {
   chargingType: string; // 'ac', 'usb', 'wireless', 'none'
 }
 
-interface BatteryStatusModuleType {
+interface Spec extends TurboModule {
   getBatteryStatus(): Promise<BatteryStatus>;
 }
 
-export default NativeModules.BatteryStatusModule as BatteryStatusModuleType;
+export default TurboModuleRegistry.getEnforcing<Spec>('BatteryStatusModule');

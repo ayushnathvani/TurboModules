@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "212724101411",
+    "project_id": "turbomodules",
+    "storage_bucket": "turbomodules.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212724101411:android:34971c9a8b6dd682925c96",
+        "android_client_info": {
+          "package_name": "com.turbomodules"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlHiLouoTrZojKoynzo9v6wS73k0h880g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

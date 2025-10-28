@@ -1,11 +1,40 @@
 /**
- * TurboModule Spec for Cloud Credentials Management
- * Handles secure cloud storage and retrieval of login credentials with Google Cloud
+ * TurboModule Spec for Google Password Manager Integration
+ * Handles secure credential storage and retrieval using Google Password Manager
  */
 
-import { NativeModules } from 'react-native';
+import type { TurboModule } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
 
-// Interface for cloud credential data
+// Interface for password manager credential data
+export interface PasswordManagerCredential {
+  type: 'password' | 'google';
+  username?: string;
+  password?: string;
+  id?: string;
+  displayName?: string;
+  profilePictureUri?: string;
+  idToken?: string;
+}
+
+// Interface for password manager suggestion
+export interface PasswordManagerSuggestion {
+  username: string;
+  type: string;
+  lastUsed: number;
+}
+
+// Interface for password manager status
+export interface PasswordManagerStatus {
+  isAvailable: boolean;
+  isConnected: boolean;
+  lastSyncTime: number;
+  hasCredentials: boolean;
+  provider: string;
+  apiLevel: number;
+}
+
+// Legacy interfaces for backward compatibility
 export interface CloudCredential {
   username: string;
   password: string;
@@ -14,7 +43,6 @@ export interface CloudCredential {
   lastSync: number;
 }
 
-// Interface for cloud sync status
 export interface CloudSyncStatus {
   isConnected: boolean;
   lastSyncTime: number;
@@ -22,37 +50,43 @@ export interface CloudSyncStatus {
   deviceCount: number;
 }
 
-// Module interface - defines the cloud storage methods
+// Module interface - defines the password manager methods
 interface CloudCredentialsModuleType {
-  // Save credentials to Google Cloud (with device-specific encryption)
+  // New Google Password Manager methods
+  saveCredentialsToPasswordManager(
+    username: string,
+    password: string,
+  ): Promise<boolean>;
+  getCredentialsFromPasswordManager(): Promise<PasswordManagerCredential | null>;
+  showPasswordManagerPickerDialog(): Promise<PasswordManagerCredential | null>;
+  getPasswordManagerSuggestions(): Promise<PasswordManagerSuggestion[]>;
+  isPasswordManagerAvailable(): Promise<boolean>;
+  getPasswordManagerStatus(): Promise<PasswordManagerStatus>;
+  clearPasswordManagerCredentials(): Promise<boolean>;
+
+  // Legacy methods for backward compatibility (now using Password Manager)
   saveCredentialsToCloud(username: string, password: string): Promise<boolean>;
-
-  // Get credentials from Google Cloud for current device
   getCredentialsFromCloud(username: string): Promise<string | null>;
-
-  // Get all cloud credentials for this device
   getAllCloudCredentials(): Promise<CloudCredential[]>;
-
-  // Sync local credentials to cloud
   syncToCloud(): Promise<boolean>;
-
-  // Sync from cloud to local storage
   syncFromCloud(): Promise<boolean>;
-
-  // Get cloud sync status
   getCloudSyncStatus(): Promise<CloudSyncStatus>;
-
-  // Check if cloud connectivity is available
   isCloudAvailable(): Promise<boolean>;
-
-  // Get unique device identifier
   getDeviceId(): Promise<string>;
-
-  // Remove credentials from cloud
   removeCredentialsFromCloud(username: string): Promise<boolean>;
-
-  // Get credentials for all devices (admin function)
   getAllDeviceCredentials(): Promise<CloudCredential[]>;
+
+  // Add this new test method
+  testPasswordManagerSetup(): Promise<{
+    status: string;
+    apiLevel: number;
+    device: string;
+    gmsAvailable: boolean;
+    gmsVersion: string;
+    hasActivity: boolean;
+  }>;
 }
 
-export default NativeModules.CloudCredentialsModule as CloudCredentialsModuleType;
+export default TurboModuleRegistry.getEnforcing<CloudCredentialsModuleType>(
+  'CloudCredentialsModule',
+);

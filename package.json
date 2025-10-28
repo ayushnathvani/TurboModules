@@ -12,10 +12,12 @@
   "dependencies": {
     "@react-native-community/geolocation": "^3.4.0",
     "@react-native/new-app-screen": "0.80.2",
+    "formik": "^2.4.6",
     "react": "19.1.0",
     "react-native": "0.80.2",
     "react-native-device-info": "^10.14.0",
-    "react-native-geolocation-service": "^5.3.1"
+    "react-native-geolocation-service": "^5.3.1",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -40,21 +42,17 @@
   "engines": {
     "node": ">=18"
   },
-  "_comment_codegenConfig": "🔑 KEY DIFFERENCE: TurboModules require Codegen configuration. Legacy modules don't need this.",
   "codegenConfig": {
     "_comment_name": "The name of the generated spec",
     "name": "TurboModulesSpec",
     "_comment_type": "Type of modules to generate (modules = native modules)",
     "type": "modules",
-    "_comment_jsSrcsDir": "🔑 CRITICAL: Codegen looks in src/specs/ for TurboModule specs. Legacy modules in src/legacy/ are NOT processed.",
+    "_comment_jsSrcsDir": " CRITICAL: Codegen looks in src/specs/ for TurboModule specs. Legacy modules in src/legacy/ are NOT processed.",
     "jsSrcsDir": "src/specs",
     "_comment_android": "Android-specific Codegen settings",
     "android": {
       "_comment_javaPackageName": "Java/Kotlin package name for generated code",
       "javaPackageName": "com.turbomodules"
-    },
-    "_comment_what_codegen_generates": "Codegen generates: 1) C++ JSI bindings, 2) Android: NativeXXXModuleSpec.java files, 3) iOS: RCTXXXModuleSpec.h files",
-    "_comment_when_codegen_runs": "Codegen runs automatically during: npm run android OR npm run ios",
-    "_comment_where_generated_files": "Generated files location: ios/build/generated/ios/ AND android/app/build/generated/source/codegen/"
+    }
   }
 }

@@ -12,6 +12,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.WritableNativeMap
 import com.facebook.react.module.annotations.ReactModule
+import android.util.Log
 
 /**
  * ✨ OPTIMIZED TURBOMODULE - Location Services (Android)
@@ -31,27 +32,79 @@ class LocationModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
     // Cache permission state to avoid repeated checks
     private var permissionState: Boolean? = null
 
+    // Optimized permission check with caching
+    private fun checkLocationPermission(): Boolean {
+        return try {
+            val fineLocation = ContextCompat.checkSelfPermission(
+                reactApplicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            
+            val coarseLocation = ContextCompat.checkSelfPermission(
+                reactApplicationContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            
+            // Log for debugging
+            Log.d("LocationModule", "Fine Location Permission: $fineLocation")
+            Log.d("LocationModule", "Coarse Location Permission: $coarseLocation")
+            
+            // Either fine or coarse location is sufficient
+            fineLocation || coarseLocation
+        } catch (e: Exception) {
+            Log.e("LocationModule", "Error checking permissions: ${e.message}")
+            false
+        }
+    }
+
     @ReactMethod
     fun requestLocationPermission(promise: Promise) {
         try {
+            val activity = getCurrentActivity()
+            if (activity == null) {
+                promise.reject("NO_ACTIVITY", "No current activity available")
+                return
+            }
+
+            // Check if we already have permission
             val hasPermission = checkLocationPermission()
-            promise.resolve(hasPermission)
+            Log.d("LocationModule", "Current permission status: $hasPermission")
+            
+            if (hasPermission) {
+                promise.resolve(true)
+                return
+            }
+
+            // If no permission, we need to request it
+            // For now, just return false and let React Native handle the request
+            Log.w("LocationModule", "Location permission not granted - requesting from React Native side")
+            promise.resolve(false)
+            
         } catch (e: Exception) {
-            promise.reject("PERMISSION_ERROR", "Failed to check location permission", e)
+            Log.e("LocationModule", "Permission request failed: ${e.message}")
+            promise.reject("PERMISSION_ERROR", "Failed to check location permission: ${e.message}")
         }
     }
 
     @ReactMethod
     fun getCurrentLocation(promise: Promise) {
         try {
-            // Fast permission check with caching
-            if (!checkLocationPermission()) {
+            Log.d("LocationModule", "getCurrentLocation called")
+            
+            // Check permission with detailed logging
+            val hasPermission = checkLocationPermission()
+            Log.d("LocationModule", "Permission check result: $hasPermission")
+            
+            if (!hasPermission) {
+                Log.e("LocationModule", "Permission denied - fine: ${ContextCompat.checkSelfPermission(reactApplicationContext, Manifest.permission.ACCESS_FINE_LOCATION)}")
+                Log.e("LocationModule", "Permission denied - coarse: ${ContextCompat.checkSelfPermission(reactApplicationContext, Manifest.permission.ACCESS_COARSE_LOCATION)}")
                 promise.reject("PERMISSION_DENIED", "Location permission not granted. Please enable location permissions in Settings.")
                 return
             }
 
-            // Optimized location retrieval - prioritize speed over accuracy
+            // Try to get location
             val location = getFastLocation()
+            Log.d("LocationModule", "Location result: $location")
             
             if (location != null) {
                 val locationData = WritableNativeMap().apply {
@@ -62,38 +115,25 @@ class LocationModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
                     putDouble("speed", location.speed.toDouble())
                     putDouble("timestamp", location.time.toDouble())
                 }
+                Log.d("LocationModule", "Returning location: ${location.latitude}, ${location.longitude}")
                 promise.resolve(locationData)
             } else {
-                // Ultra-fast mock location generation (no complex calculations)
-                val timestamp = System.currentTimeMillis().toDouble()
+                // Generate mock location for demo purposes (like iOS version)
+                Log.w("LocationModule", "No real location available, generating mock location")
                 val mockLocation = WritableNativeMap().apply {
-                    putDouble("latitude", 37.7749) // Fixed base coordinates for speed
-                    putDouble("longitude", -122.4194)
-                    putDouble("accuracy", 15.0) // Fixed accuracy for speed
-                    putDouble("altitude", 75.0)
+                    putDouble("latitude", 37.7749 + (Math.random() - 0.5) * 0.01)
+                    putDouble("longitude", -122.4194 + (Math.random() - 0.5) * 0.01)
+                    putDouble("accuracy", 10.0 + Math.random() * 20.0)
+                    putDouble("altitude", 50.0 + Math.random() * 100.0)
                     putDouble("speed", 0.0)
-                    putDouble("timestamp", timestamp)
+                    putDouble("timestamp", System.currentTimeMillis().toDouble())
                 }
                 promise.resolve(mockLocation)
             }
         } catch (e: Exception) {
-            promise.reject("LOCATION_ERROR", "Failed to get current location: ${e.message}", e)
+            Log.e("LocationModule", "getCurrentLocation failed: ${e.message}", e)
+            promise.reject("LOCATION_ERROR", "Failed to get current location: ${e.message}")
         }
-    }
-
-    // Optimized permission check with caching
-    private fun checkLocationPermission(): Boolean {
-        if (permissionState == null) {
-            permissionState = (ContextCompat.checkSelfPermission(
-                reactApplicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED || 
-            ContextCompat.checkSelfPermission(
-                reactApplicationContext,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED)
-        }
-        return permissionState ?: false
     }
 
     // Optimized location retrieval - prioritize speed

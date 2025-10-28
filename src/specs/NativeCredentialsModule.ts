@@ -3,7 +3,8 @@
  * Handles secure storage and retrieval of login credentials with suggestions like Facebook
  */
 
-import { NativeModules } from 'react-native';
+import type { TurboModule } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
 
 // Interface for stored credential (with encrypted password)
 export interface StoredCredential {
@@ -19,7 +20,7 @@ export interface CredentialSuggestion {
 }
 
 // Module interface - defines the methods available
-interface CredentialsModuleType {
+interface Spec extends TurboModule {
   // Save username and password securely (never gets removed)
   saveCredentials(username: string, password: string): Promise<boolean>;
 
@@ -39,4 +40,4 @@ interface CredentialsModuleType {
   updateLastUsed(username: string): Promise<boolean>;
 }
 
-export default NativeModules.CredentialsModule as CredentialsModuleType;
+export default TurboModuleRegistry.getEnforcing<Spec>('CredentialsModule');
